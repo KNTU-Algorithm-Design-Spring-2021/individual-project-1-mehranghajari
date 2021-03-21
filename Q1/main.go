@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+
+	"github.com/Arafatk/glot"
 )
 
 type Point struct {
@@ -81,4 +83,39 @@ func main() {
 	}
 	result := calculateMinMax(points, 0, len(points)-1)
 	result.String()
+
+	dimensions := 2
+	// The dimensions supported by the plot
+	persist := false
+	debug := false
+	plot, _ := glot.NewPlot(dimensions, persist, debug)
+	pointGroupName := "Simple Lines"
+	style := "lines"
+	ps := make([][]float64, 2)
+	for i := range points {
+		ps[0] = append(ps[0], points[i].x)
+	}
+	ps[0] = append(ps[0], points[0].x)
+	for i := range points {
+		ps[1] = append(ps[1], points[i].y)
+	}
+	ps[1] = append(ps[1], points[0].y)
+
+	plot.AddPointGroup(pointGroupName, style, ps)
+
+	pg := "BOX"
+	style = "lines"
+	boxPoints := [][]float64{{result.minX, result.minX, result.maxX, result.maxX, result.minX}, {result.minY, result.maxY, result.maxY, result.minY, result.minY}}
+	plot.AddPointGroup(pg, style, boxPoints)
+	// A plot type used to make points/ curves and customize and save them as an image.
+	plot.SetTitle("Example Plot")
+	// Optional: Setting the title of the plot
+	plot.SetXLabel("X-Axis")
+	plot.SetYLabel("Y-Axis")
+	// Optional: Setting label for X and Y axis
+	plot.SetXrange(-2, 18)
+	plot.SetYrange(-2, 18)
+
+	// Optional: Setting axis ranges
+	plot.SavePlot("2.png")
 }
